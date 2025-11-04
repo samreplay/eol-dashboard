@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --phase-0-color: #10b981;
+  --phase-1-color: #8b5cf6;
+  --phase-2-color: #f59e0b;
+  --phase-3-color: #ef4444;
+  --phase-4-color: #3b82f6;
+}
+
+@layer base {
+  body {
+    @apply font-sans antialiased;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .phase-badge {
+    @apply px-3 py-1 rounded text-white font-semibold text-sm;
+  }
+
+  .phase-0 {
+    @apply bg-emerald-600 shadow-sm;
+  }
+
+  .phase-1 {
+    @apply bg-violet-600 shadow-sm;
+  }
+
+  .phase-2 {
+    @apply bg-amber-600 shadow-sm;
+  }
+
+  .phase-3 {
+    @apply bg-rose-600 shadow-sm;
+  }
+
+  .phase-4 {
+    @apply bg-sky-600 shadow-sm;
+  }
+}
