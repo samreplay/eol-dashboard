@@ -31,6 +31,46 @@
           </svg>
           Add Product
         </NuxtLink>
+
+        <!-- AFAS Integration -->
+        <div class="pt-4 mt-4 border-t border-gray-800">
+          <p class="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+            AFAS Integration
+          </p>
+
+          <NuxtLink
+            to="/afas-test"
+            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded transition-colors"
+            :class="$route.path === '/afas-test' ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            AFAS Test
+          </NuxtLink>
+
+          <NuxtLink
+            to="/afas-analyze"
+            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded transition-colors"
+            :class="$route.path === '/afas-analyze' ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            AFAS Analyze
+          </NuxtLink>
+
+          <NuxtLink
+            to="/sync"
+            class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded transition-colors"
+            :class="$route.path === '/sync' ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-700 hover:text-white'"
+          >
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+            </svg>
+            AFAS Sync
+          </NuxtLink>
+        </div>
       </nav>
 
       <!-- Footer Info -->

@@ -52,6 +52,87 @@
         </div>
       </div>
 
+      <!-- Smart Phase Warning -->
+      <div v-if="phaseMismatch" class="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+        <div class="flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+          </svg>
+          <div class="flex-1">
+            <h4 class="text-sm font-semibold text-amber-900">Phase Update Suggested</h4>
+            <p class="text-sm text-amber-700 mt-1">
+              <strong>Current:</strong> Phase {{ product?.current_phase }} - {{ getPhaseInfo(product?.current_phase || 0).label }}<br>
+              <strong>Should be:</strong> Phase {{ calculatedPhase }} - {{ getPhaseInfo(calculatedPhase || 0).label }}
+            </p>
+            <button
+              @click="updateToCalculatedPhase"
+              :disabled="saving"
+              class="mt-3 px-4 py-2 bg-amber-600 text-white text-sm font-medium rounded-lg hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {{ saving ? 'Updating...' : `Update to Phase ${calculatedPhase}` }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Manual Phase Selector -->
+      <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 mb-4">Manual Phase Selection</h3>
+
+        <!-- Phase Badge Selector -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-3">Select Phase</label>
+          <div class="flex gap-3">
+            <button
+              v-for="phase in ([0, 1, 2, 3, 4] as const)"
+              :key="phase"
+              @click="selectedPhase = phase"
+              :class="[
+                'flex flex-col items-center justify-center w-20 h-20 rounded-lg border-2 transition-all',
+                selectedPhase === phase
+                  ? 'border-gray-900 ring-2 ring-gray-900 ring-offset-2'
+                  : 'border-gray-200 hover:border-gray-400',
+                getPhaseInfo(phase).bgClass
+              ]"
+              :title="getPhaseInfo(phase).label"
+            >
+              <span class="text-white font-bold text-2xl">{{ phase }}</span>
+              <span class="text-white text-xs mt-1 opacity-90">{{ getPhaseInfo(phase).label.split(' ')[0] }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Selected Phase Info -->
+        <div v-if="selectedPhase !== product?.current_phase" class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p class="text-sm text-blue-900">
+            <strong>Selected:</strong> Phase {{ selectedPhase }} - {{ getPhaseInfo(selectedPhase).label }}
+          </p>
+        </div>
+
+        <!-- Optional Reason -->
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">
+            Reason for manual change (optional)
+          </label>
+          <input
+            v-model="changeReason"
+            type="text"
+            placeholder="e.g., Customer hold, special agreement, manual override..."
+            class="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-gray-900"
+          />
+          <p class="mt-1 text-xs text-gray-500">This reason will be logged in phase history</p>
+        </div>
+
+        <!-- Save Button -->
+        <button
+          @click="savePhaseChange"
+          :disabled="selectedPhase === product?.current_phase || saving"
+          class="w-full px-4 py-3 bg-gray-900 text-white font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {{ saving ? 'Saving...' : 'Save Phase Change' }}
+        </button>
+      </div>
+
       <!-- Product Details Grid -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- Basic Information -->
@@ -68,7 +149,7 @@
             </div>
             <div v-if="product.artikelgroep">
               <dt class="text-sm font-medium text-gray-500">Product Group</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ product.artikelgroep }}</dd>
+              <dd class="mt-1 text-sm text-gray-900">{{ getArticleGroupDisplay(product.artikelgroep) }}</dd>
             </div>
             <div>
               <dt class="text-sm font-medium text-gray-500">Status</dt>
@@ -185,16 +266,16 @@
           <h3 class="text-lg font-semibold mb-4">Packaging Units</h3>
           <dl class="space-y-3">
             <div>
-              <dt class="text-sm font-medium text-gray-500">Per STK (Piece)</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_stk || 'Not set' }}</dd>
+              <dt class="text-sm font-medium text-gray-500">Per Dozen (DOZ)</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_per_dozen || 'Not set' }}</dd>
             </div>
             <div>
-              <dt class="text-sm font-medium text-gray-500">Per DOZ (Dozen)</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_doz || 'Not set' }}</dd>
+              <dt class="text-sm font-medium text-gray-500">Per Pallet (PAL)</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_per_pallet || 'Not set' }}</dd>
             </div>
             <div>
-              <dt class="text-sm font-medium text-gray-500">Per PAL (Pallet)</dt>
-              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_pal || 'Not set' }}</dd>
+              <dt class="text-sm font-medium text-gray-500">Per Outer Dozen (ODZ)</dt>
+              <dd class="mt-1 text-sm text-gray-900">{{ product.unit_per_outer_dozen || 'Not set' }}</dd>
             </div>
           </dl>
         </div>
@@ -253,7 +334,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ProductWithCalculations } from '~/types/database';
+import type { ProductWithCalculations, EOLPhase } from '~/types/database';
+import { getArticleGroupDisplay } from '~/utils/articleGroups';
+import { calculateProductPhase, getPhaseInfo, formatDate, formatCurrency } from '~/utils/phaseCalculator';
 
 definePageMeta({
   layout: 'default'
@@ -261,15 +344,25 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
+const supabase = useSupabaseClient();
 const { fetchProductById, deleteProduct } = useProducts();
 
 const productId = route.params.id as string;
 const product = ref<ProductWithCalculations | null>(null);
 const loading = ref(true);
 
+// Phase management state
+const selectedPhase = ref<EOLPhase>(0);
+const changeReason = ref('');
+const saving = ref(false);
+
 onMounted(async () => {
   product.value = await fetchProductById(productId);
   loading.value = false;
+
+  if (product.value) {
+    selectedPhase.value = product.value.current_phase;
+  }
 });
 
 const phaseInfo = computed(() => {
@@ -283,6 +376,90 @@ const salesHistoryData = computed(() => {
     (product.value as any)[`sales_month_${i + 1}`] || 0
   );
 });
+
+// Phase calculation
+const calculatedPhase = computed(() => {
+  if (!product.value) return null;
+  return calculateProductPhase(product.value);
+});
+
+const phaseMismatch = computed(() => {
+  return calculatedPhase.value !== null &&
+         calculatedPhase.value !== product.value?.current_phase;
+});
+
+// Watch for product changes to update selectedPhase
+watch(() => product.value?.current_phase, (newPhase) => {
+  if (newPhase !== undefined) {
+    selectedPhase.value = newPhase;
+  }
+});
+
+// Functions
+async function updateToCalculatedPhase() {
+  if (calculatedPhase.value === null || !product.value) return;
+
+  saving.value = true;
+  try {
+    const { error } = await (supabase
+      .from('products') as any)
+      .update({
+        current_phase: calculatedPhase.value
+      })
+      .eq('id', product.value.id);
+
+    if (error) throw error;
+
+    // Refresh product data
+    product.value = await fetchProductById(productId);
+    if (product.value) {
+      selectedPhase.value = product.value.current_phase;
+    }
+  } catch (error) {
+    console.error('Failed to update phase:', error);
+    alert('Failed to update phase');
+  } finally {
+    saving.value = false;
+  }
+}
+
+async function savePhaseChange() {
+  if (!product.value || selectedPhase.value === product.value.current_phase) return;
+
+  saving.value = true;
+  try {
+    // Update phase
+    const { error } = await (supabase
+      .from('products') as any)
+      .update({
+        current_phase: selectedPhase.value
+      })
+      .eq('id', product.value.id);
+
+    if (error) throw error;
+
+    // If reason provided, add to phase_history
+    if (changeReason.value.trim()) {
+      await (supabase
+        .from('phase_history') as any)
+        .insert({
+          product_id: product.value.id,
+          from_phase: product.value.current_phase,
+          to_phase: selectedPhase.value,
+          reason: changeReason.value.trim()
+        });
+    }
+
+    // Refresh product data
+    product.value = await fetchProductById(productId);
+    changeReason.value = '';
+  } catch (error) {
+    console.error('Failed to save phase change:', error);
+    alert('Failed to save phase change');
+  } finally {
+    saving.value = false;
+  }
+}
 
 const handleDelete = async () => {
   if (!confirm('Are you sure you want to delete this product?')) return;

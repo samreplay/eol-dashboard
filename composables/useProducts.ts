@@ -17,7 +17,7 @@ export const useProducts = () => {
       const { data, error: fetchError } = await supabase
         .from('products')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('monthly_sales', { ascending: false });
 
       if (fetchError) throw fetchError;
 

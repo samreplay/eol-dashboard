@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(npx nuxi@latest init . --packageManager npm)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.afas.help)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []

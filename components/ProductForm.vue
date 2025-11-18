@@ -298,13 +298,14 @@
     <!-- Packaging Units -->
     <div class="bg-white rounded shadow border border-gray-200 p-6">
       <h3 class="text-lg font-semibold mb-4">Packaging Units</h3>
+      <p class="text-sm text-gray-600 mb-4">Number of units per package type (from AFAS)</p>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Per STK (Piece)
+            Per Dozen (DOZ)
           </label>
           <input
-            v-model.number="formData.unit_stk"
+            v-model.number="formData.unit_per_dozen"
             type="number"
             min="0"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -314,10 +315,10 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Per DOZ (Dozen)
+            Per Pallet (PAL)
           </label>
           <input
-            v-model.number="formData.unit_doz"
+            v-model.number="formData.unit_per_pallet"
             type="number"
             min="0"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -327,10 +328,10 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-2">
-            Per PAL (Pallet)
+            Per Outer Dozen (ODZ)
           </label>
           <input
-            v-model.number="formData.unit_pal"
+            v-model.number="formData.unit_per_outer_dozen"
             type="number"
             min="0"
             class="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
@@ -459,9 +460,9 @@ const formData = reactive({
   months_of_data: props.product?.months_of_data || 12,
 
   // Packaging units
-  unit_stk: props.product?.unit_stk || null,
-  unit_doz: props.product?.unit_doz || null,
-  unit_pal: props.product?.unit_pal || null,
+  unit_per_dozen: props.product?.unit_per_dozen || null,
+  unit_per_pallet: props.product?.unit_per_pallet || null,
+  unit_per_outer_dozen: props.product?.unit_per_outer_dozen || null,
 
   // Portal status
   website_status: props.product?.website_status || 'active',

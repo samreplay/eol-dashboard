@@ -8,6 +8,7 @@ export interface Product {
   // Product classification
   artikelgroep: string | null;
   product_blocked: boolean;
+  supplier: string | null;
 
   // EOL management (manual)
   eol_date: string | null; // ISO date string
@@ -46,10 +47,10 @@ export interface Product {
   sales_month_12: number;
   months_of_data: number;
 
-  // Packaging units
-  unit_stk: number | null;
-  unit_doz: number | null;
-  unit_pal: number | null;
+  // Packaging units (from AFAS Unit Per Item connector)
+  unit_per_dozen: number | null; // DOZ
+  unit_per_pallet: number | null; // PAL
+  unit_per_outer_dozen: number | null; // ODZ
 
   // Portal status
   website_status: 'active' | 'inactive' | 'hidden';
