@@ -21,6 +21,7 @@ import {
   Legend,
   type ChartOptions
 } from 'chart.js';
+import { generateMonthLabels } from '~/utils/phaseCalculator';
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
